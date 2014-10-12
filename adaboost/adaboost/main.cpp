@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void stumpClassify(vector<float>& retArray, vector<vector<float>>& dataMatrix, int dimen, int threshVal, string threshIneq)
+void stumpClassify(vector<float>& retArray, vector<vector<float>>& dataMatrix, int dimen, float threshVal, string threshIneq)
 {
 	for (int i = 0 ; dataMatrix.size(); i++)
 	{
@@ -25,6 +25,27 @@ void stumpClassify(vector<float>& retArray, vector<vector<float>>& dataMatrix, i
 		}
 	}
 }
+
+void buildStump(vector<vector<float>>dataArr,vector<int>classLabels,vector<float>D)
+{
+	int m = dataArr.size();
+	int n = dataArr[0].size();
+	int numSteps = 10;
+	vector<float> bestStump;
+	vector<float> bestClasEst;
+	int minError = 10000;
+
+	for (int i = 0 ;i < m; i++)
+	{
+		bestClasEst[i] = 0;
+	}
+
+	for (int i = 0 ;i< n;i++)
+	{
+		
+	}
+}
+
 
 int main()
 {
