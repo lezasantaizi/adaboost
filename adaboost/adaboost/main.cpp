@@ -1,9 +1,16 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 #include <vector>
-
+#include "../3rdparty/include/opencv.hpp"
 using namespace std;
-
+using namespace cv;
+#pragma comment(lib, "opencv_highgui249d.lib")
+#pragma comment(lib, "opencv_imgproc249d.lib")
+#pragma comment(lib, "opencv_core249d.lib")
+#pragma comment(lib, "opencv_highgui249.lib")
+#pragma comment(lib, "opencv_imgproc249.lib")
+#pragma comment(lib, "opencv_core249.lib")
 void stumpClassify(vector<float>& retArray, vector<vector<float>>& dataMatrix, int dimen, float threshVal, string threshIneq)
 {
 	for (int i = 0 ; dataMatrix.size(); i++)
@@ -46,8 +53,22 @@ void buildStump(vector<vector<float>>dataArr,vector<int>classLabels,vector<float
 	}
 }
 
+void loadSimpData()
+{
+	float datMatArray[] = {1.0,2.1,2.0,1.1,1.3,1.0,1.0,1.0,2.0,1.0};
+	int classLabels[] = {1,1,-1,-1,1};
+	Mat datMat(5, 2, CV_32FC1, datMatArray);
 
-int main()
+}
+
+void loadDataSet(string fileName)
+{
+	fstream outFile;
+	outFile.open(fileName.c_str());
+
+
+}
+int main(int argc, char** argv)
 {
 	return 0;
 }
