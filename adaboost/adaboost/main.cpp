@@ -66,18 +66,18 @@ void stumpClassify(vector<float>& retArray, vector<vector<float>>& dataMatrix, i
 //	return bestStump,minError,bestClasEst
 
 
-void buildStump(vector<vector<float>>dataArr,vector<int>classLabels,vector<float>D)
+void buildStump(vector<vector<float>>& dataArr,vector<int>& classLabels,vector<float>& D,vector<float> bestStump,float& minError,vector<float> bestClasEst)
 {
 	int m = dataArr.size();
 	int n = dataArr[0].size();
 	int numSteps = 10;
-	vector<float> bestStump;
-	vector<float> bestClasEst;
-	int minError = 10000;
+	//vector<float> bestStump;
+	//vector<float> bestClasEst;
+	minError = 10000;
 	vector<float> rangeMin;
 	vector<float> rangeMax;
 	float stepSize;
-
+	//
 	for (int i = 0 ;i < m; i++)
 	{
 		bestClasEst.push_back(0);
@@ -151,6 +151,24 @@ void buildStump(vector<vector<float>>dataArr,vector<int>classLabels,vector<float
 
 void adaBoostTrainDS(vector<vector<float>>dataArr,vector<int>classLabels, int numIt=40)
 {
+	int m = dataArr.size();
+	vector<float> D;
+	vector<float> aggClassEst;
+	float error;
+	vector<float> bestStump;
+	vector<float> bestClasEst;
+	for (int i = 0 ;i< m ;i++)
+	{
+		D.push_back(1/m);
+		aggClassEst.push_back(0);
+	}
+
+	for (int i = 0 ;i< numIt; i++)
+	{
+		buildStump(dataArr, classLabels, D, bestStump, error, bestClasEst);
+		float alpha = 0.5*log((1.0-error)/MAX(error,1e-16));
+
+	}
 
 }
 
