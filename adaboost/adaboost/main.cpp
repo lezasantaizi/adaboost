@@ -28,14 +28,14 @@ void stumpClassify(vector<float>& retArray, vector<vector<float>>& dataMatrix, i
 	{
 		for (int i = 0 ;i < dataMatrix.size(); i++)
 		{
-			retArray[dataMatrix[i][dimen] <= threshVal] = -1.0;
+			retArray[i] = dataMatrix[i][dimen] <= threshVal?-1.0:1.0;
 		}
 	}
 	else
 	{
 		for (int i = 0 ;i < dataMatrix.size(); i++)
 		{
-			retArray[dataMatrix[i][dimen] > threshVal] = -1.0;
+			retArray[i] = dataMatrix[i][dimen] > threshVal?-1.0:1.0;
 		}
 	}
 }
@@ -66,7 +66,7 @@ void stumpClassify(vector<float>& retArray, vector<vector<float>>& dataMatrix, i
 //	return bestStump,minError,bestClasEst
 
 
-void buildStump(vector<vector<float>>& dataArr,vector<int>& classLabels,vector<float>& D,vector<float> bestStump,float& minError,vector<float>& bestClasEst)
+void buildStump(vector<vector<float>>& dataArr,vector<int>& classLabels,vector<float>& D,vector<float>& bestStump,float& minError,vector<float>& bestClasEst)
 {
 	int m = dataArr.size();
 	int n = dataArr[0].size();
@@ -74,26 +74,22 @@ void buildStump(vector<vector<float>>& dataArr,vector<int>& classLabels,vector<f
 	//vector<float> bestStump;
 	//vector<float> bestClasEst;
 	minError = 10000;
-	vector<float> rangeMin;
-	vector<float> rangeMax;
+	//vector<float> rangeMin;
+	//vector<float> rangeMax;
 	float stepSize;
 	//
-	for (int i = 0 ;i < m; i++)
-	{
-		bestClasEst.push_back(0);
-		bestStump.push_back(0);
-	}
-
 	for (int i = 0 ;i< n;i++)
 	{
 		float tempMin = 10000, tempMax = -10000;
+		//rangeMin.clear();
+		//rangeMax.clear();
 		for (int j = 0; j< m; j++)
 		{
 			tempMin = dataArr[j][i]>tempMin?tempMin:dataArr[j][i];
 			tempMax = dataArr[j][i]>tempMax?dataArr[j][i]:tempMax;
 		}
-		rangeMin.push_back(tempMin);
-		rangeMax.push_back(tempMax);
+		//rangeMin.push_back(tempMin);
+		//rangeMax.push_back(tempMax);
 		stepSize = (tempMax-tempMin)/numSteps;
 
 		for (int j = -1 ;j < numSteps+1; j++)
@@ -127,28 +123,29 @@ void buildStump(vector<vector<float>>& dataArr,vector<int>& classLabels,vector<f
 }
 
 
-//weakClassArr = []
-//m = shape(dataArr)[0]
-//D = mat(ones((m,1))/m)   #init D to all equal
-//	aggClassEst = mat(zeros((m,1)))
-//	for i in range(numIt):
-//bestStump,error,classEst = buildStump(dataArr,classLabels,D)#build Stump
-//#print "D:",D.T
-//	alpha = float(0.5*log((1.0-error)/max(error,1e-16)))#calc alpha, throw in max(error,eps) to account for error=0
-//	bestStump['alpha'] = alpha  
-//	weakClassArr.append(bestStump)                  #store Stump Params in Array
-//#print "classEst: ",classEst.T
-//	expon = multiply(-1*alpha*mat(classLabels).T,classEst) #exponent for D calc, getting messy
-//	D = multiply(D,exp(expon))                              #Calc New D for next iteration
-//	D = D/D.sum()
-//#calc training error of all classifiers, if this is 0 quit for loop early (use break)
-//	aggClassEst += alpha*classEst
-//#print "aggClassEst: ",aggClassEst.T
-//	aggErrors = multiply(sign(aggClassEst) != mat(classLabels).T,ones((m,1)))
-//	errorRate = aggErrors.sum()/m
-//	print "total error: ",errorRate
-//	if errorRate == 0.0: break
-//return weakClassArr,aggClassEst
+//def adaBoostTrainDS(dataArr,classLabels,numIt=40):
+//    weakClassArr = []
+//    m = shape(dataArr)[0]
+//    D = mat(ones((m,1))/m)   #init D to all equal
+//    aggClassEst = mat(zeros((m,1)))
+//    for i in range(numIt):
+//        bestStump,error,classEst = buildStump(dataArr,classLabels,D)#build Stump
+//        #print "D:",D.T
+//        alpha = float(0.5*log((1.0-error)/max(error,1e-16)))#calc alpha, throw in max(error,eps) to account for error=0
+//        bestStump['alpha'] = alpha  
+//        weakClassArr.append(bestStump)                  #store Stump Params in Array
+//        #print "classEst: ",classEst.T
+//        expon = multiply(-1*alpha*mat(classLabels).T,classEst) #exponent for D calc, getting messy
+//        D = multiply(D,exp(expon))                              #Calc New D for next iteration
+//        D = D/D.sum()
+//        #calc training error of all classifiers, if this is 0 quit for loop early (use break)
+//        aggClassEst += alpha*classEst
+//        #print "aggClassEst: ",aggClassEst.T
+//        aggErrors = multiply(sign(aggClassEst) != mat(classLabels).T,ones((m,1)))
+//        errorRate = aggErrors.sum()/m
+//        print "total error: ",errorRate
+//        if errorRate == 0.0: break
+//    return weakClassArr,aggClassEst
 void adaBoostTrainDS(vector<vector<float>>& dataArr,vector<int>& classLabels,vector<vector<float>>& weakClassArr,vector<float>& aggClassEst, int numIt=40)
 {
 	int m = dataArr.size();
@@ -161,6 +158,8 @@ void adaBoostTrainDS(vector<vector<float>>& dataArr,vector<int>& classLabels,vec
 	{
 		D.push_back(1.0/m);
 		aggClassEst.push_back(0);
+		bestClasEst.push_back(0);
+		bestStump.push_back(0);
 	}
 
 	for (int i = 0 ;i< numIt; i++)
@@ -185,9 +184,11 @@ void adaBoostTrainDS(vector<vector<float>>& dataArr,vector<int>& classLabels,vec
 			//vector<int> aggErrors;
 			D[j] /= sum_D;
 			//aggErrors.push_back(aggClassEst[j]>0?1:-1 != classLabels[j]);
-			sum_E += aggClassEst[j]>0?1:-1 != classLabels[j];
+			int temp = aggClassEst[j]>0?1:-1;
+			sum_E += (temp != classLabels[j]);
 		}
 		//float errorRate = ;
+		printf("total error: %.4f\n",sum_E/m);
 		if(sum_E/m <=1e-4)
 			break;
 
