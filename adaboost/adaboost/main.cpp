@@ -12,12 +12,6 @@ using namespace cv;
 #pragma comment(lib, "opencv_imgproc249.lib")
 #pragma comment(lib, "opencv_core249.lib")
 
-//enum INEQ
-//{
-//	lt = 0,
-//	gt = 1,
-//};
-
 void stumpClassify(vector<float>& retArray, vector<vector<float>>& dataMatrix, int dimen, float threshVal, int threshIneq)
 {
 	for (int i = 0 ; i< dataMatrix.size(); i++)
