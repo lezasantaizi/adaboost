@@ -12,12 +12,8 @@ using namespace cv;
 #pragma comment(lib, "opencv_imgproc249.lib")
 #pragma comment(lib, "opencv_core249.lib")
 
-void stumpClassify(vector<float>& retArray, vector<vector<float>>& dataMatrix, int dimen, float threshVal, int threshIneq)
+void stumpClassify(vector<float>& retArray, vector<vector<float>> dataMatrix, int dimen, float threshVal, int threshIneq)
 {
-	for (int i = 0 ; i< dataMatrix.size(); i++)
-	{
-		retArray.push_back(1);
-	}
 	if (threshIneq == 0)
 	{
 		for (int i = 0 ;i < dataMatrix.size(); i++)
@@ -60,47 +56,40 @@ void stumpClassify(vector<float>& retArray, vector<vector<float>>& dataMatrix, i
 //	return bestStump,minError,bestClasEst
 
 
-void buildStump(vector<vector<float>>& dataArr,vector<int>& classLabels,vector<float>& D,vector<float>& bestStump,float& minError,vector<float>& bestClasEst)
+void buildStump(vector<vector<float>> dataArr,vector<int> classLabels,vector<float>& D,vector<float>& bestStump,float& minError,vector<float>& bestClasEst)
 {
 	int m = dataArr.size();
 	int n = dataArr[0].size();
 	int numSteps = 10;
-	//vector<float> bestStump;
-	//vector<float> bestClasEst;
 	minError = 10000;
-	//vector<float> rangeMin;
-	//vector<float> rangeMax;
 	float stepSize;
-	//
+
 	for (int i = 0 ;i< n;i++)
 	{
 		float tempMin = 10000, tempMax = -10000;
-		//rangeMin.clear();
-		//rangeMax.clear();
 		for (int j = 0; j< m; j++)
 		{
 			tempMin = dataArr[j][i]>tempMin?tempMin:dataArr[j][i];
 			tempMax = dataArr[j][i]>tempMax?dataArr[j][i]:tempMax;
 		}
-		//rangeMin.push_back(tempMin);
-		//rangeMax.push_back(tempMax);
 		stepSize = (tempMax-tempMin)/numSteps;
 
 		for (int j = -1 ;j < numSteps+1; j++)
 		{
 			float threshVal = (tempMin + float(j) * stepSize);
 			vector<float> predictedVals;
-			vector<float> errArr ;
 			float weightedError = 0;
+			for (int i = 0 ; i< dataArr.size(); i++)
+			{
+				predictedVals.push_back(1);
+			}
 			for (int ineq = 0; ineq<2 ; ineq++)
 			{
 				stumpClassify(predictedVals,dataArr,i,threshVal,ineq);
 
 				for (int k = 0; k < m ; k++)
 				{
-					errArr.push_back(1);
-					errArr[k] = predictedVals[k] == classLabels[k]?0:1;
-					weightedError += D[k]*errArr[k];
+					weightedError += D[k]*(predictedVals[k] == classLabels[k]?0:1);
 				}
 
 				if(weightedError < minError)
@@ -140,7 +129,7 @@ void buildStump(vector<vector<float>>& dataArr,vector<int>& classLabels,vector<f
 //        print "total error: ",errorRate
 //        if errorRate == 0.0: break
 //    return weakClassArr,aggClassEst
-void adaBoostTrainDS(vector<vector<float>>& dataArr,vector<int>& classLabels,vector<vector<float>>& weakClassArr,vector<float>& aggClassEst, int numIt=40)
+void adaBoostTrainDS(vector<vector<float>> dataArr,vector<int> classLabels,vector<vector<float>>& weakClassArr,vector<float>& aggClassEst, int numIt=40)
 {
 	int m = dataArr.size();
 	vector<float> D;
@@ -166,22 +155,17 @@ void adaBoostTrainDS(vector<vector<float>>& dataArr,vector<int>& classLabels,vec
 		float sum_E = 0;
 		for (int j =0 ;j < classLabels.size();j++)
 		{
-			//vector<float> expon;
 			float temp = -1*alpha*classLabels[j]*bestClasEst[j];
-			//expon.push_back(temp)  ;
 			D[j] = D[j] * exp(temp);
 			sum_D += D[j];
 			aggClassEst[j] += alpha * bestClasEst[j];
 		}
 		for (int j = 0 ;j<classLabels.size();j++)
 		{
-			//vector<int> aggErrors;
 			D[j] /= sum_D;
-			//aggErrors.push_back(aggClassEst[j]>0?1:-1 != classLabels[j]);
 			int temp = aggClassEst[j]>0?1:-1;
 			sum_E += (temp != classLabels[j]);
 		}
-		//float errorRate = ;
 		printf("total error: %.4f\n",sum_E/m);
 		if(sum_E/m <=1e-4)
 			break;
@@ -206,7 +190,6 @@ void loadSimpData(vector<vector<float>>& datMat,vector<int>& clsLabels)
 		clsLabels.push_back(classLabels[i]);
 		datMat.push_back(temp);
 	}
-	//Mat datMat(5, 2, CV_32FC1, datMatArray);
 
 }
 
