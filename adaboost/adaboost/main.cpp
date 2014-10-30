@@ -12,6 +12,7 @@ using namespace cv;
 #pragma comment(lib, "opencv_imgproc249.lib")
 #pragma comment(lib, "opencv_core249.lib")
 
+
 void stumpClassify(vector<float>& retArray, vector<vector<float>> dataMatrix, int dimen, float threshVal, int threshIneq)
 {
 	if (threshIneq == 0)
@@ -166,6 +167,7 @@ void adaBoostTrainDS(vector<vector<float>> dataArr,vector<int> classLabels,vecto
 			int temp = aggClassEst[j]>0?1:-1;
 			sum_E += (temp != classLabels[j]);
 		}
+
 		printf("total error: %.4f\n",sum_E/m);
 		if(sum_E/m <=1e-4)
 			break;
